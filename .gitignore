@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+
+# Virtual environments
+venv/
+
+# IDE
+.vscode/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Logs
+*.log
+logs/
+
+# Output files from scraper
+response_*.html
+response_pretty_*.html
+extracted_info_*.json
+reel_*.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# Misc
+*.bak
+*.tmp
+
