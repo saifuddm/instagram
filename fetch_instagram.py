@@ -7,10 +7,13 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
+import subprocess
+import shutil
 from datetime import datetime
+from pathlib import Path
 
 # Target Instagram reel URL
-URL = "https://www.instagram.com/reel/DSmdCsLCIhb/"
+URL = "https://www.instagram.com/reel/DNiLOWoxdHI"
 
 # Headers to mimic a browser request (Instagram blocks requests without proper headers)
 HEADERS = {
@@ -173,6 +176,76 @@ def parse_description(description: str) -> dict:
     return parsed
 
 
+def download_video_with_ytdlp(url: str, output_dir: str = ".") -> str | None:
+    """
+    Download Instagram video/reel using yt-dlp.
+
+    Args:
+        url: The Instagram reel URL
+        output_dir: Directory to save the video
+
+    Returns:
+        Path to the downloaded video file, or None if failed
+    """
+    # Check if yt-dlp is installed
+    if not shutil.which("yt-dlp"):
+        print("\n⚠️  yt-dlp is not installed!")
+        print("Install it with: pip install yt-dlp")
+        print("Or: winget install yt-dlp")
+        return None
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_template = str(Path(output_dir) / f"reel_{timestamp}.%(ext)s")
+
+    cmd = [
+        "yt-dlp",
+        "--no-warnings",
+        "-o", output_template,
+        "--no-playlist",
+        url
+    ]
+
+    print(f"\n📹 Downloading video with yt-dlp...")
+    print(f"Command: {' '.join(cmd)}")
+
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=120  # 2 minute timeout
+        )
+
+        if result.returncode == 0:
+            # Find the downloaded file
+            for ext in ["mp4", "webm", "mkv"]:
+                video_path = Path(output_dir) / f"reel_{timestamp}.{ext}"
+                if video_path.exists():
+                    print(f"✅ Video downloaded: {video_path}")
+                    return str(video_path)
+
+            # If specific extension not found, search for any matching file
+            for f in Path(output_dir).glob(f"reel_{timestamp}.*"):
+                if f.suffix.lower() in [".mp4", ".webm", ".mkv", ".mov"]:
+                    print(f"✅ Video downloaded: {f}")
+                    return str(f)
+
+            print("✅ Download completed but couldn't locate file")
+            print(f"stdout: {result.stdout}")
+            return None
+        else:
+            print(f"❌ Download failed!")
+            print(f"stderr: {result.stderr}")
+            return None
+
+    except subprocess.TimeoutExpired:
+        print("❌ Download timed out after 2 minutes")
+        return None
+    except Exception as e:
+        print(f"❌ Error during download: {e}")
+        return None
+
+
 def generate_markdown(info: dict, parsed_desc: dict, url: str) -> str:
     """
     Generate a formatted markdown string from the extracted info.
@@ -273,6 +346,18 @@ def main():
     with open(md_filename, "w", encoding="utf-8") as f:
         f.write(markdown_content)
     print(f"\nMarkdown saved to: {md_filename}")
+
+    # Download the video
+    print("\n" + "=" * 50)
+    print("VIDEO DOWNLOAD:")
+    print("=" * 50)
+    video_path = download_video_with_ytdlp(URL)
+    if video_path:
+        print(f"\n🎉 Video saved to: {video_path}")
+    else:
+        print("\n💡 Tip: If login is required, you can use cookies:")
+        print("   yt-dlp --cookies-from-browser chrome <url>")
+        print("   yt-dlp --cookies cookies.txt <url>")
 
 
 if __name__ == "__main__":
