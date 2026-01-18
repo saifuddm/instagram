@@ -40,3 +40,7 @@ Thumbs.db
 *.bak
 *.tmp
 
+# Folders
+temp/
+data/
+video/

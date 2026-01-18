@@ -4,16 +4,16 @@ overview: Create a file watcher that monitors an Obsidian queue file for Instagr
 todos:
   - id: refactor-fetch
     content: Refactor fetch_instagram.py to accept CLI args and work as importable module
-    status: in_progress
+    status: completed
   - id: add-compression
     content: Add ffmpeg video compression function (CRF 28, 720p max)
-    status: pending
+    status: completed
   - id: create-watcher
     content: Create obsidian_watcher.py with watchdog file monitoring
-    status: pending
+    status: completed
   - id: update-deps
     content: Update requirements.txt with watchdog dependency
-    status: pending
+    status: completed
 ---
 
 # Obsidian Instagram Automation System
