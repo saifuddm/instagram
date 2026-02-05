@@ -27,8 +27,9 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 # Model Configuration
 # =============================================================================
 
-QUALITY_CHECK_MODEL = os.getenv("QUALITY_CHECK_MODEL", "gemini-2.5-flash-lite")
-ENHANCEMENT_MODEL = os.getenv("ENHANCEMENT_MODEL", "gemini-2.5-flash")
+QUALITY_CHECK_MODEL = os.getenv(
+    "QUALITY_CHECK_MODEL", "gemini-flash-lite-latest")
+ENHANCEMENT_MODEL = os.getenv("ENHANCEMENT_MODEL", "gemini-3-flash-preview")
 
 # =============================================================================
 # Processing Options
